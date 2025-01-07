@@ -13,7 +13,7 @@ let package = Package(
     ],
     dependencies: [
         .package(url: "https://github.com/johnno1962/StringIndex",
-                 .upToNextMinor(from: "2.2.3")),
+                 .upToNextMinor(from: "2.2.4")),
     ],
     targets: [
         // Targets are the basic building blocks of a package, defining a module or a test suite.

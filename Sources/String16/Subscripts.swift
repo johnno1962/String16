@@ -7,7 +7,8 @@
 //
 //  Repo: https://github.com/johnno1962/String16.git
 //
-
+//  Copy of StringIndex subscripts for String16.
+//
 extension String16 {
     public typealias OffsetIndex = IndexType.OffsetType
     public typealias OISubstring = String // Can/should? be Substring

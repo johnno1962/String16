@@ -7,6 +7,7 @@
 //
 //  Repo: https://github.com/johnno1962/String16.git
 //
+//  Related to Unicode segmenting indicies correctly. Taps into OS's ICU.
 //  See: https://unicode-org.github.io/icu-docs/apidoc/dev/icu4c/ubrk_8h.html
 //
 
@@ -21,7 +22,7 @@ extension Unicode {
         return unfairLock
     }()
     
-    static func withBreakIterator<T>(for string: String16, body:
+    static func withBreakIterator<T>(for string: String16, _ body:
                                      @escaping (CharacterBreaker) -> T) -> T {
         return string.withElementBuffer {
             let dictKey = "CharacterBreaker"

@@ -9,7 +9,7 @@ from any StringProtocol and it literally is a Swift Array of 16 bit integers
 wrapped in a struct which controls how the elements are displayed.
 
 Thereafter, you can index into or modify the Array any way you please but be 
-aware that all all integer indexes represent the start of valid Unicoded
+aware that not all integer indexes represent the start of valid Unicoded
 characters. For correct procesing, use the `String16.Index16` struct or 
 better still the [StringIndex](https://github.com/johnno1962/StringIndex)
 package has been integrated to use expressions such as the following:

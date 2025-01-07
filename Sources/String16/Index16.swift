@@ -45,8 +45,8 @@ extension Unicode {
         public static var failed = { (msg: String) -> Never in
             fatalError("String16: "+msg)
         }
-
         public var index: Int
+        
         public static func < (lhs: Self, rhs: Self) -> Bool {
             return lhs.index < rhs.index
         }

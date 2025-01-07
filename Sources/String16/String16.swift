@@ -7,11 +7,14 @@
 //
 //  Repo: https://github.com/johnno1962/String16.git
 //
+//  Basic String16 data representation which is just an Array of UInt16s.
+//
 
 import Foundation
 
 public typealias String16 = Array<Unicode.UTF16Scalar>
 
+/// Bridging to String
 extension String {
     public init(_ s: String16) {
         self = s.stringValue
@@ -26,6 +29,7 @@ extension ArraySlice where Element == String16.Element {
     public var stringValue: String { Array(self).stringValue }
 }
 
+/// Extensions to create/access buffer.
 extension String16 {
     public typealias UTF16Scalar = Element
     
@@ -44,6 +48,7 @@ extension String16 {
     }
 }
 
+/// functionality related to indexing.
 extension String16 {
     public typealias IndexType = Unicode.Index16
     func fail<T>(_ msg: String) -> T {
@@ -51,18 +56,20 @@ extension String16 {
     }
 
     public var startIndex16: IndexType {
-        return index16(at: 0)
+        return IndexType(index: 0)
     }
     public var endIndex16: IndexType {
-        return index16(at: count)
+        return IndexType(index: count)
     }
-    public func index16(at: Int) -> IndexType {
+    public func index16(at: Int) -> IndexType? {
         #if DEBUG
-        Unicode.withBreakIterator(for: self) { breaker in
+        guard Unicode.withBreakIterator(for: self, { breaker in
             if !breaker.isBoundary(at: at) {
-                NSLog("\(Self.self): Creating invalid index at: \(at)")
+                NSLog("String16: Creating invalid index at: \(at)")
+                return false
             }
-        }
+            return true
+        }) else { return nil }
         #endif
         return IndexType(index: at)
     }
@@ -110,6 +117,7 @@ extension String16 {
             self[i..<index16(after: i)] = String(newValue)
         }
     }
+    /// Iterators.
     public struct ScalarIterator: Sequence, IteratorProtocol {
         let string: String16
         var index = 0
@@ -132,19 +140,19 @@ extension String16 {
         return AnySequence(ScalarIterator(string: self))
     }
     struct Index16Iterator: Sequence, IteratorProtocol {
-        let string: String16, offset: Int
+        let string: String16, stride: Int
         var index: IndexType
         mutating public func next() -> Range<IndexType>? {
-            if let next = index.safeIndex(offsetBy: offset, in: string) {
+            if let next = index.safeIndex(offsetBy: stride, in: string) {
                 defer { index = next }
-                return offset > 0 ? index ..< next : next ..< index
+                return stride > 0 ? index ..< next : next ..< index
             }
             return nil
         }
     }
     public var characterRanges: AnySequence<Range<IndexType>> {
         return AnySequence(Index16Iterator(
-            string: self, offset: 1, index: startIndex16))
+            string: self, stride: 1, index: startIndex16))
     }
     struct CharacterIterator: Sequence, IteratorProtocol {
         var indices: Index16Iterator
@@ -154,11 +162,11 @@ extension String16 {
     }
     public var characters: AnySequence<Character> {
         return AnySequence(CharacterIterator(indices: Index16Iterator(
-            string: self, offset: 1, index: startIndex16)))
+            string: self, stride: 1, index: startIndex16)))
     }
     public var charactersReversed: AnySequence<Character> {
         return AnySequence(CharacterIterator(indices: Index16Iterator(
-            string: self, offset: -1, index: endIndex16)))
+            string: self, stride: -1, index: endIndex16)))
     }
 }
 
